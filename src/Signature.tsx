@@ -1,4 +1,4 @@
-import React, { Ref, useImperativeHandle, useRef } from 'react';
+import React, { Ref, useEffect, useImperativeHandle, useRef } from 'react';
 import {
   View,
   ViewStyle,
@@ -15,10 +15,14 @@ interface SignatureProps {
   onChange?: (signature: string) => void;
   onBegin: () => void;
   onEnd: () => void;
+  width: number;
+  height: number;
 }
 
 const Signature = (
   {
+    width,
+    height,
     containerStyle,
     canvasStyle,
     lineWidth = 3,
@@ -82,21 +86,27 @@ const Signature = (
     }
   };
 
+  const handleCanvas = (canvas: any) => {
+    if (canvas) {
+      canvas.width = width;
+      canvas.height = height; // Set canvas height here or make it dynamic
+      canvasRef.current = canvas;
+    }
+  };
+
   return (
-    <>
-      <View
-        style={containerStyle}
-        onTouchCancel={readSignature}
-        onTouchStart={() => {
-          lastX = null;
-          lastY = null;
-          onBegin?.();
-        }}
-        onTouchEnd={readSignature}
-        onTouchMove={trackSignature}>
-        <Canvas ref={canvasRef} style={canvasStyle} />
-      </View>
-    </>
+    <View
+      style={containerStyle}
+      onTouchCancel={readSignature}
+      onTouchStart={() => {
+        lastX = null;
+        lastY = null;
+        onBegin?.();
+      }}
+      onTouchEnd={readSignature}
+      onTouchMove={trackSignature}>
+      <Canvas ref={handleCanvas} style={canvasStyle} />
+    </View>
   );
 };
 
